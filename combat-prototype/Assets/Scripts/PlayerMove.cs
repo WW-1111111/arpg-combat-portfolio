@@ -3,6 +3,7 @@
 public class PlayerMove : MonoBehaviour
 {
     private Rigidbody rb;
+    private CapsuleCollider capsule;
 
     public float speed = 5f;
     public float jumpForce = 10f;
@@ -17,6 +18,7 @@ public class PlayerMove : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        capsule = GetComponent<CapsuleCollider>();
     }
 
     void Update()
@@ -70,7 +72,10 @@ public class PlayerMove : MonoBehaviour
 
     bool IsGrounded()
     {
-        Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
+        // 计算 Capsule 底部的世界坐标
+        Vector3 capsuleBottom = transform.position + capsule.center - new Vector3(0, capsule.height / 2, 0);
+        // 起点向上抬一点点（0.05），避免起点正好在 Plane 表面（边界 case 物理不稳定）
+        Vector3 rayOrigin = capsuleBottom + Vector3.up * 0.05f;
         return Physics.Raycast(rayOrigin, Vector3.down, groundCheckDistance, groundLayer);
     }
 }
