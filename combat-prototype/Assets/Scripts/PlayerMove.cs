@@ -43,6 +43,7 @@ public class PlayerMove : MonoBehaviour
 
     void FixedUpdate()
     {
+        //Debug.Log("Grounded=" + IsGrounded() + ", PosY=" + transform.position.y + ", v=" + Input.GetAxis("Vertical"));
         if (IsGrounded())
         {
             Vector3 movement = inputDirection * speed;
@@ -69,6 +70,7 @@ public class PlayerMove : MonoBehaviour
 
     bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, Vector3.down, groundCheckDistance, groundLayer);
+        Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
+        return Physics.Raycast(rayOrigin, Vector3.down, groundCheckDistance, groundLayer);
     }
 }
