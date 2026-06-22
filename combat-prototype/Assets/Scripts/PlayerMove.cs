@@ -4,8 +4,10 @@ public class PlayerMove : MonoBehaviour
 {
     private Rigidbody rb;
     private CapsuleCollider capsule;
+    private Animator animator;
 
     public float speed = 5f;
+    public float rotationSpeed = 10f;
     public float jumpForce = 10f;
     public float airControl = 5f;
     public float fallMultiplier = 15f;
@@ -19,28 +21,35 @@ public class PlayerMove : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         capsule = GetComponent<CapsuleCollider>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
     {
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
-
-        // 拿到相机的水平前方和水平右方
         Vector3 camForward = Camera.main.transform.forward;
         Vector3 camRight = Camera.main.transform.right;
-        camForward.y = 0;
-        camRight.y = 0;
-        camForward.Normalize();
-        camRight.Normalize();
-
-        // 把输入转成"相对相机"的方向
+        camForward.y = 0; camRight.y = 0;
+        camForward.Normalize(); camRight.Normalize();
         inputDirection = camForward * v + camRight * h;
+
+        // 让角色转向移动方向（动作RPG标准：朝哪跑就面朝哪，避免侧/后移时仍是“向前跑”）
+        if (inputDirection.sqrMagnitude > 0.01f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(inputDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
+        }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            jumpPressed = true;
+            jumpPressed = true;                 // 通知 FixedUpdate 施加跳跃物理力
+            animator.SetTrigger("Jumping");     // 点燃 Animator 里的 Jumping 触发器 → 播放跳跃动画
         }
+
+        // 新增：设置 Animator Speed
+        Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+        animator.SetFloat("Speed", horizontalVelocity.magnitude);
     }
 
     void FixedUpdate()
