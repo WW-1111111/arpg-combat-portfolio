@@ -47,10 +47,14 @@ public class PlayerMove : MonoBehaviour
             animator.SetTrigger("Jumping");     // 点燃 Animator 里的 Jumping 触发器 → 播放跳跃动画
         }
 
-        // 鼠标左键 = 攻击
+        // 鼠标左键 = 攻击（攻击中不可打断：必须等当前攻击播完才能出下一击）
         if (Input.GetMouseButtonDown(0))
         {
-            animator.SetTrigger("Attack");      // 点燃 Attack 触发器 → 播放劈砍动画
+            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            if (!stateInfo.IsName("Attack"))    // 只有"当前不在Attack状态"时才允许出招
+            {
+                animator.SetTrigger("Attack");
+            }
         }
 
         // 新增：设置 Animator Speed
