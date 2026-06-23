@@ -5,9 +5,10 @@ public class PlayerMove : MonoBehaviour
     private Rigidbody rb;
     private CapsuleCollider capsule;
     private Animator animator;
+    private CameraFollow cameraFollow;   // 主相机上的锁定脚本(读当前锁定的敌人)
 
     public float speed = 5f;
-    public float rotationSpeed = 10f;
+    public float turnSpeed = 360f;        // 转身速度(度/秒)，越小转得越慢越自然
     public float jumpForce = 10f;
     public float airControl = 5f;
     public float fallMultiplier = 15f;
@@ -22,6 +23,7 @@ public class PlayerMove : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         capsule = GetComponent<CapsuleCollider>();
         animator = GetComponent<Animator>();
+        cameraFollow = Camera.main.GetComponent<CameraFollow>();
     }
 
     void Update()
@@ -35,10 +37,23 @@ public class PlayerMove : MonoBehaviour
         inputDirection = camForward * v + camRight * h;
 
         // 让角色转向移动方向（动作RPG标准：朝哪跑就面朝哪，避免侧/后移时仍是“向前跑”）
-        if (inputDirection.sqrMagnitude > 0.01f)
+        Transform lockTarget = cameraFollow != null ? cameraFollow.CurrentTarget : null;
+        if (lockTarget != null)
         {
+            // 锁定时：始终面向敌人
+            Vector3 toEnemy = lockTarget.position - transform.position;
+            toEnemy.y = 0;
+            if (toEnemy.sqrMagnitude > 0.01f)
+            {
+                Quaternion tr = Quaternion.LookRotation(toEnemy);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, tr, turnSpeed * Time.deltaTime);
+            }
+        }
+        else if (inputDirection.sqrMagnitude > 0.01f && !IsAttacking())
+        {
+            // 未锁定：面向移动方向
             Quaternion targetRot = Quaternion.LookRotation(inputDirection);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeed * Time.deltaTime);
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -67,8 +82,16 @@ public class PlayerMove : MonoBehaviour
         //Debug.Log("Grounded=" + IsGrounded() + ", PosY=" + transform.position.y + ", v=" + Input.GetAxis("Vertical"));
         if (IsGrounded())
         {
-            Vector3 movement = inputDirection * speed;
-            rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
+            if (IsAttacking())
+            {
+                // 攻击中：锁住水平移动（出招承诺感）；y轴保留给重力/跳跃
+                rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+            }
+            else
+            {
+                Vector3 movement = inputDirection * speed;
+                rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
+            }
         }
         else
         {
@@ -87,6 +110,12 @@ public class PlayerMove : MonoBehaviour
         }
 
         jumpPressed = false;
+    }
+
+    bool IsAttacking()
+    {
+        // 当前在Attack状态 = 正在攻击
+        return animator.GetCurrentAnimatorStateInfo(0).IsName("Attack");
     }
 
     bool IsGrounded()
