@@ -47,6 +47,12 @@ public class PlayerMove : MonoBehaviour
             animator.SetTrigger("Jumping");     // 点燃 Animator 里的 Jumping 触发器 → 播放跳跃动画
         }
 
+        // 鼠标左键 = 攻击
+        if (Input.GetMouseButtonDown(0))
+        {
+            animator.SetTrigger("Attack");      // 点燃 Attack 触发器 → 播放劈砍动画
+        }
+
         // 新增：设置 Animator Speed
         Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
         animator.SetFloat("Speed", horizontalVelocity.magnitude);
