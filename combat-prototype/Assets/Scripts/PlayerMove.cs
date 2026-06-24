@@ -15,6 +15,11 @@ public class PlayerMove : MonoBehaviour
     public LayerMask groundLayer;
     public float groundCheckDistance = 0.6f;
 
+    [Header("攻击判定")]
+    public float attackRange = 1.2f;                          // 命中检测半径
+    public float attackDamage = 25f;                          // 每次攻击伤害
+    public Vector3 attackOffset = new Vector3(0f, 1f, 1.5f);  // 判定球相对角色的位置(前方/上方)
+
     private Vector3 inputDirection;
     private bool jumpPressed;
 
@@ -116,6 +121,27 @@ public class PlayerMove : MonoBehaviour
     {
         // 当前在Attack状态 = 正在攻击
         return animator.GetCurrentAnimatorStateInfo(0).IsName("Attack");
+    }
+
+    // 由攻击动画的 Animation Event 在"挥砍命中帧"调用
+    public void OnAttackHit()
+    {
+        // 在角色前方做一个球形范围检测，找出范围内所有碰撞体
+        Vector3 center = transform.TransformPoint(attackOffset);
+        Collider[] hits = Physics.OverlapSphere(center, attackRange);
+        foreach (Collider hit in hits)
+        {
+            // 碰到的东西如果有 Health 组件(即敌人)，就扣血
+            Health h = hit.GetComponent<Health>();
+            if (h != null) h.TakeDamage(attackDamage);
+        }
+    }
+
+    // 在Scene视图里画出攻击判定球(选中角色时显示)，方便调位置和大小
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.TransformPoint(attackOffset), attackRange);
     }
 
     bool IsGrounded()

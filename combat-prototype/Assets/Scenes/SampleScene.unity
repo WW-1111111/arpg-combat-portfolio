@@ -137,7 +137,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMove
   speed: 5
-  rotationSpeed: 10
+  turnSpeed: 360
   jumpForce: 10
   airControl: 5
   fallMultiplier: 15
@@ -145,6 +145,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   groundCheckDistance: 0.15
+  attackRange: 1.2
+  attackDamage: 25
+  attackOffset: {x: 0, y: 1, z: 1.5}
 --- !u!136 &280704014
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -212,6 +215,7 @@ GameObject:
   - component: {fileID: 282705043}
   - component: {fileID: 282705042}
   - component: {fileID: 282705041}
+  - component: {fileID: 282705045}
   m_Layer: 0
   m_Name: Capsule
   m_TagString: Enemy
@@ -314,6 +318,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &282705045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 282705040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea4d4d1d62a344e44868853308411e8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  maxHealth: 100
 --- !u!1 &616834737
 GameObject:
   m_ObjectHideFlags: 0
@@ -426,6 +443,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &662387030 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1852576806548013000, guid: d11ed2cfc81559e4394a189a612594b5, type: 3}
+  m_PrefabInstance: {fileID: 1888445996}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -742,14 +764,87 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
   target: {fileID: 280704017}
-  distance: 8
+  camDistance: 6
+  camHeight: 3
+  pitch: 18
   mouseSensitivity: 3
-  minPitch: -30
-  maxPitch: 80
+  followDamping: 8
   lockRange: 20
-  lockDistance: 6
-  lockHeight: 3.5
-  lockLookHeight: 1.2
+  lockAngle: 45
+--- !u!4 &1103829853 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400006, guid: 6a0eedfe1b2e14d47b276e72159e85b1, type: 3}
+  m_PrefabInstance: {fileID: 1735959058}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1735959058
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 662387030}
+    m_Modifications:
+    - target: {fileID: 100006, guid: 6a0eedfe1b2e14d47b276e72159e85b1, type: 3}
+      propertyPath: m_Name
+      value: Longsword w_ Colliders
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: 6a0eedfe1b2e14d47b276e72159e85b1, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: 6a0eedfe1b2e14d47b276e72159e85b1, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: 6a0eedfe1b2e14d47b276e72159e85b1, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: 6a0eedfe1b2e14d47b276e72159e85b1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.017
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: 6a0eedfe1b2e14d47b276e72159e85b1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: 6a0eedfe1b2e14d47b276e72159e85b1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.025
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: 6a0eedfe1b2e14d47b276e72159e85b1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6324602
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: 6a0eedfe1b2e14d47b276e72159e85b1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.29833415
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: 6a0eedfe1b2e14d47b276e72159e85b1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.095066994
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: 6a0eedfe1b2e14d47b276e72159e85b1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.70848656
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: 6a0eedfe1b2e14d47b276e72159e85b1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -30.802
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: 6a0eedfe1b2e14d47b276e72159e85b1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -20.619
+      objectReference: {fileID: 0}
+    - target: {fileID: 400006, guid: 6a0eedfe1b2e14d47b276e72159e85b1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 102.227
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6a0eedfe1b2e14d47b276e72159e85b1, type: 3}
 --- !u!1 &1762331810
 GameObject:
   m_ObjectHideFlags: 0
@@ -784,7 +879,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
   speed: 5
-  rotationSpeed: 10
+  turnSpeed: 360
   jumpForce: 10
   airControl: 5
   fallMultiplier: 15
@@ -792,6 +887,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   groundCheckDistance: 0.6
+  attackRange: 1.2
+  attackDamage: 25
+  attackOffset: {x: 0, y: 1, z: 1.5}
 --- !u!65 &1762331812
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -974,7 +1072,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 1852576806548013000, guid: d11ed2cfc81559e4394a189a612594b5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1103829853}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d11ed2cfc81559e4394a189a612594b5, type: 3}
       insertIndex: -1
