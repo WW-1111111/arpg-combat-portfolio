@@ -148,6 +148,9 @@ MonoBehaviour:
   attackRange: 1.2
   attackDamage: 25
   attackOffset: {x: 0, y: 1, z: 1.5}
+  hitSounds: []
+  hitstopDuration: 0.08
+  hitstopScale: 0.05
 --- !u!136 &280704014
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -331,6 +334,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHealth: 100
+  squashScale: 0.8
+  squashTime: 0.12
 --- !u!1 &616834737
 GameObject:
   m_ObjectHideFlags: 0
@@ -890,6 +895,9 @@ MonoBehaviour:
   attackRange: 1.2
   attackDamage: 25
   attackOffset: {x: 0, y: 1, z: 1.5}
+  hitSounds: []
+  hitstopDuration: 0.08
+  hitstopScale: 0.05
 --- !u!65 &1762331812
 BoxCollider:
   m_ObjectHideFlags: 0

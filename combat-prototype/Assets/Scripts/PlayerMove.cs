@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class PlayerMove : MonoBehaviour
     public float attackRange = 1.2f;                          // 命中检测半径
     public float attackDamage = 25f;                          // 每次攻击伤害
     public Vector3 attackOffset = new Vector3(0f, 1f, 1.5f);  // 判定球相对角色的位置(前方/上方)
+    public AudioClip[] hitSounds;              // 命中音效(可放多个，命中时随机播一个，避免单调)
+    public float hitstopDuration = 0.08f;      // 顿帧持续(真实秒)
+    public float hitstopScale = 0.05f;         // 顿帧时的时间流速(接近0=几乎冻结)
 
     private Vector3 inputDirection;
     private bool jumpPressed;
@@ -129,12 +133,30 @@ public class PlayerMove : MonoBehaviour
         // 在角色前方做一个球形范围检测，找出范围内所有碰撞体
         Vector3 center = transform.TransformPoint(attackOffset);
         Collider[] hits = Physics.OverlapSphere(center, attackRange);
+        bool hitSomething = false;
         foreach (Collider hit in hits)
         {
-            // 碰到的东西如果有 Health 组件(即敌人)，就扣血
             Health h = hit.GetComponent<Health>();
-            if (h != null) h.TakeDamage(attackDamage);
+            if (h != null) { h.TakeDamage(attackDamage); hitSomething = true; }
         }
+
+        if (hitSomething)
+        {
+            if (hitSounds != null && hitSounds.Length > 0)
+            {
+                AudioClip clip = hitSounds[Random.Range(0, hitSounds.Length)];   // 从数组里随机选一个
+                AudioSource.PlayClipAtPoint(clip, center);                       // 独立播放,不怕敌人被销毁
+            }
+            StartCoroutine(HitStop());                                           // 顿帧
+        }
+    }
+
+    // 顿帧：命中瞬间把时间几乎冻结一小会，制造"咔"的打击感(只狼那种)
+    IEnumerator HitStop()
+    {
+        Time.timeScale = hitstopScale;
+        yield return new WaitForSecondsRealtime(hitstopDuration);  // 真实时间,不受timeScale影响
+        Time.timeScale = 1f;
     }
 
     // 在Scene视图里画出攻击判定球(选中角色时显示)，方便调位置和大小
