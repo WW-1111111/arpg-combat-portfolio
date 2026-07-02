@@ -24,8 +24,17 @@ public class PlayerMove : MonoBehaviour
     public float hitstopDuration = 0.08f;      // 顿帧持续(真实秒)
     public float hitstopScale = 0.05f;         // 顿帧时的时间流速(接近0=几乎冻结)
 
+    [Header("闪避")]
+    public KeyCode dodgeKey = KeyCode.LeftShift;   // 闪避键
+    public float dodgeSpeed = 10f;                 // 闪避冲刺速度
+    public float dodgeDuration = 0.5f;             // 闪避动作总时长(秒)
+    public float invulnerableTime = 0.4f;          // 无敌帧时长(应略短于dodgeDuration)
+
     private Vector3 inputDirection;
     private bool jumpPressed;
+    private Health health;           // 自己的血量(闪避无敌帧用)
+    private bool isDodging = false;
+    private Vector3 dodgeDir;
 
     void Start()
     {
@@ -33,6 +42,7 @@ public class PlayerMove : MonoBehaviour
         capsule = GetComponent<CapsuleCollider>();
         animator = GetComponent<Animator>();
         cameraFollow = Camera.main.GetComponent<CameraFollow>();
+        health = GetComponent<Health>();
     }
 
     void Update()
@@ -82,6 +92,12 @@ public class PlayerMove : MonoBehaviour
         }
 
         // 新增：设置 Animator Speed
+        // 闪避键 = 翻滚（攻击中/闪避中不可再触发）
+        if (Input.GetKeyDown(dodgeKey) && !isDodging && !IsAttacking())
+        {
+            StartCoroutine(Dodge());
+        }
+
         Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
         animator.SetFloat("Speed", horizontalVelocity.magnitude);
     }
@@ -91,7 +107,12 @@ public class PlayerMove : MonoBehaviour
         //Debug.Log("Grounded=" + IsGrounded() + ", PosY=" + transform.position.y + ", v=" + Input.GetAxis("Vertical"));
         if (IsGrounded())
         {
-            if (IsAttacking())
+            if (isDodging)
+            {
+                // 闪避中：朝闪避方向冲刺
+                rb.linearVelocity = new Vector3(dodgeDir.x * dodgeSpeed, rb.linearVelocity.y, dodgeDir.z * dodgeSpeed);
+            }
+            else if (IsAttacking())
             {
                 // 攻击中：锁住水平移动（出招承诺感）；y轴保留给重力/跳跃
                 rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
@@ -157,6 +178,23 @@ public class PlayerMove : MonoBehaviour
         Time.timeScale = hitstopScale;
         yield return new WaitForSecondsRealtime(hitstopDuration);  // 真实时间,不受timeScale影响
         Time.timeScale = 1f;
+    }
+
+    // 闪避(翻滚)：朝输入方向冲刺，前段有无敌帧
+    IEnumerator Dodge()
+    {
+        isDodging = true;
+        // 有方向输入就朝输入方向翻，否则向后翻
+        dodgeDir = inputDirection.sqrMagnitude > 0.01f ? inputDirection.normalized : -transform.forward;
+        if (dodgeDir.sqrMagnitude > 0.01f) transform.rotation = Quaternion.LookRotation(dodgeDir);
+        animator.SetTrigger("roll");
+
+        if (health != null) health.invulnerable = true;          // 开无敌帧
+        yield return new WaitForSeconds(invulnerableTime);
+        if (health != null) health.invulnerable = false;         // 关无敌帧
+
+        yield return new WaitForSeconds(Mathf.Max(0f, dodgeDuration - invulnerableTime));  // 动作收尾
+        isDodging = false;
     }
 
     // 在Scene视图里画出攻击判定球(选中角色时显示)，方便调位置和大小

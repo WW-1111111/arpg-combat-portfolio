@@ -138,7 +138,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMove
   speed: 5
   turnSpeed: 360
-  jumpForce: 10
+  jumpForce: 6
   airControl: 5
   fallMultiplier: 15
   groundLayer:
@@ -151,6 +151,10 @@ MonoBehaviour:
   hitSounds: []
   hitstopDuration: 0.08
   hitstopScale: 0.05
+  dodgeKey: 304
+  dodgeSpeed: 10
+  dodgeDuration: 0.5
+  invulnerableTime: 0.4
 --- !u!136 &280704014
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -206,6 +210,23 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d11ed2cfc81559e4394a189a612594b5, type: 3}
   m_PrefabInstance: {fileID: 1888445996}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &280704018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 280704012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea4d4d1d62a344e44868853308411e8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  maxHealth: 100
+  destroyOnDeath: 0
+  invulnerable: 0
+  squashScale: 0.8
+  squashTime: 0.12
 --- !u!1 &282705040
 GameObject:
   m_ObjectHideFlags: 0
@@ -219,6 +240,7 @@ GameObject:
   - component: {fileID: 282705042}
   - component: {fileID: 282705041}
   - component: {fileID: 282705045}
+  - component: {fileID: 282705046}
   m_Layer: 0
   m_Name: Capsule
   m_TagString: Enemy
@@ -334,8 +356,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHealth: 100
+  destroyOnDeath: 1
+  invulnerable: 0
   squashScale: 0.8
   squashTime: 0.12
+--- !u!114 &282705046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 282705040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3103513ecb625b146bcd9fac86b8ec05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
+  detectRange: 10
+  attackRange: 2
+  moveSpeed: 3
+  attackDamage: 10
+  attackCooldown: 1.5
 --- !u!1 &616834737
 GameObject:
   m_ObjectHideFlags: 0
@@ -658,7 +699,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 10, y: 1, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -898,6 +939,10 @@ MonoBehaviour:
   hitSounds: []
   hitstopDuration: 0.08
   hitstopScale: 0.05
+  dodgeKey: 304
+  dodgeSpeed: 10
+  dodgeDuration: 0.5
+  invulnerableTime: 0.4
 --- !u!65 &1762331812
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1070,10 +1115,24 @@ PrefabInstance:
       propertyPath: m_Name
       value: Paladin_Character
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d11ed2cfc81559e4394a189a612594b5, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: d11ed2cfc81559e4394a189a612594b5, type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: df0aa8eacfc944143a758d4b5e3164de, type: 2}
+    - target: {fileID: 5866666021909216657, guid: d11ed2cfc81559e4394a189a612594b5, type: 3}
+      propertyPath: m_WarningMessage
+      value: "\nBinding warning: Some generic clip(s) animate transforms that are
+        already bound by a Humanoid avatar. These transforms can only be changed
+        by Humanoid clips.\n\tTransform 'mixamorig:Hips'\n\tTransform 'mixamorig:LeftFoot'\n\tTransform
+        'mixamorig:LeftHandThumb2'\n\tTransform 'mixamorig:LeftHandIndex1'\n\tTransform
+        'mixamorig:LeftHandPinky2'\n\tTransform 'mixamorig:RightHandRing2'\n\tTransform
+        'mixamorig:Spine1'\n\tTransform 'mixamorig:LeftToeBase'\n\tTransform 'mixamorig:RightArm'\n\tTransform
+        'mixamorig:LeftLeg'\n\tand more ...\n\tFrom animation clip 'mixamo.com'"
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: d11ed2cfc81559e4394a189a612594b5, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
@@ -1094,6 +1153,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d11ed2cfc81559e4394a189a612594b5, type: 3}
       insertIndex: -1
       addedObject: {fileID: 280704013}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d11ed2cfc81559e4394a189a612594b5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 280704018}
   m_SourcePrefab: {fileID: 100100000, guid: d11ed2cfc81559e4394a189a612594b5, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
