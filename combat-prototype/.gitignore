@@ -1,0 +1,18 @@
+# === 绝不上传的密钥（公开仓库！）===
+deepseek_key.txt
+*.key
+
+# === Unity 常规忽略 ===
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+.vs/
+.idea/
+*.csproj
+*.sln
+*.user

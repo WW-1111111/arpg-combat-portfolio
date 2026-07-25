@@ -58,7 +58,10 @@ public class Health : MonoBehaviour
     {
         Debug.Log(gameObject.name + " 死亡");
         if (destroyOnDeath)
+        {
+            QuestManager.Instance?.ReportKill(gameObject.tag);                // 通知任务系统：击杀+1
             Destroy(gameObject);                                              // 敌人：直接销毁
+        }
         else
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);  // 玩家：重载当前场景=重来
     }
