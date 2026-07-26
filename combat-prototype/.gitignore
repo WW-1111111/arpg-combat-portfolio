@@ -1,5 +1,7 @@
 # === 绝不上传的密钥（公开仓库！）===
 deepseek_key.txt
+gemini_key.txt
+*_key.txt
 *.key
 
 # === Unity 常规忽略 ===

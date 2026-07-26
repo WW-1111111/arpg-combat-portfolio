@@ -55,9 +55,17 @@ public static class QuestLogger
 {
     static string runId;
     static string filePath;
+    static string fileName = "generations.jsonl";
 
     public static string RunId { get { EnsureInit(); return runId; } }
     public static string FilePath { get { EnsureInit(); return filePath; } }
+
+    // 批量评估时切到独立文件，避免和交互游玩的记录混在一起
+    public static void SetFileName(string name)
+    {
+        fileName = name;
+        filePath = null;   // 强制重新初始化（同时会生成新的 runId）
+    }
 
     static void EnsureInit()
     {
@@ -65,7 +73,7 @@ public static class QuestLogger
         runId = DateTime.Now.ToString("yyyyMMdd_HHmmss");
         string dir = Path.Combine(Application.dataPath, "..", "EvalLogs");
         Directory.CreateDirectory(dir);
-        filePath = Path.Combine(dir, "generations.jsonl");
+        filePath = Path.Combine(dir, fileName);
     }
 
     public static void Log(GenerationRecord r)

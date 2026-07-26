@@ -494,6 +494,58 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1852576806548013000, guid: d11ed2cfc81559e4394a189a612594b5, type: 3}
   m_PrefabInstance: {fileID: 1888445996}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &670264561
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 670264563}
+  - component: {fileID: 670264562}
+  m_Layer: 0
+  m_Name: BatchRunner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &670264562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 670264561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72671d36c349cdc49bbbb84588b7220f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BatchRunner
+  instancesPerType: 30
+  delayBetweenInstances: 0.4
+  perCallTimeout: 60
+  outputFileName: batch_generations.jsonl
+  runOnStart: 1
+  disableQuestManager: 1
+  freezeCombatDuringBatch: 1
+  worldContext: "\u82A6\u82C7\u4E4B\u56FD\u2014\u2014\u6218\u56FD\u4E71\u4E16\u4E2D\u6700\u5F31\u5C0F\u7684\u56FD\u5BB6\u3002\u56FD\u4EBA\u8FF7\u604B\u7011\u5E03\u4E4B\u6C34\uFF0C\u53EA\u56E0\u90A3\u6C34\u4EE3\u8868\u201C\u4E0D\u6B7B\u201D\u7684\u529B\u91CF\uFF1B\u7EB5\u7136\u996E\u4E0B\u5B83\u4F1A\u4F7F\u4EBA\u5931\u53BB\u7406\u667A\u3001\u5316\u4E3A\u602A\u7269\uFF0C\u4EBA\u4EEC\u4E3A\u6C42\u6C38\u751F\u4ECD\u7518\u613F\u5982\u6B64\u3002\u56FD\u529B\u56E0\u800C\u51CB\u655D\uFF0C\u82A6\u82C7\u4E4B\u56FD\u5C61\u906D\u5F3A\u90BB\u4FB5\u7565\uFF0C\u5185\u5FE7\u5916\u60A3\u3002\u4E3B\u89D2\u662F\u4E00\u540D\u5FCD\u8005\uFF0C\u540D\u4E3A\u201C\u5F71\u5B50\u201D\uFF0C\u4F8D\u5949\u5176\u4E3B\u201C\u795E\u5B50\u201D\u3002\u5F71\u5B50\u7684\u76EE\u6807\u662F\u6551\u51FA\u4E3B\u4EBA\uFF0C\u795E\u5B50\u7684\u76EE\u6807\u662F\u65A9\u65AD\u201C\u4E0D\u6B7B\u201D\uFF0C\u5F71\u5B50\u4EA6\u613F\u52A9\u5176\u8FBE\u6210\u3002"
+--- !u!4 &670264563
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 670264561}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.9668, y: 0.23494, z: 0.78751}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1232,3 +1284,4 @@ SceneRoots:
   - {fileID: 1888445996}
   - {fileID: 282705044}
   - {fileID: 1422184577}
+  - {fileID: 670264563}
