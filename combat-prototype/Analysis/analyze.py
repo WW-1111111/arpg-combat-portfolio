@@ -28,6 +28,8 @@ import matplotlib.pyplot as plt
 plt.rcParams["font.sans-serif"] = ["Microsoft YaHei", "SimHei"]
 plt.rcParams["axes.unicode_minus"] = False
 
+from corpus import load_corpus   # 语料完整性守卫：混入多次运行时直接退出
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(HERE, "..", "EvalLogs", "batch_generations.jsonl")
 OUT = os.path.join(HERE, "results")
@@ -152,11 +154,10 @@ def calibrate(rows, arm="LLM", rounds=5, seed=7):
 # ============ 主流程 ============
 
 def main():
-    rows = [json.loads(l) for l in open(DATA, encoding="utf-8") if l.strip()]
+    rows = load_corpus(DATA)
     for r in rows:
         r["narrative"] = narrative_of(r)
         r["len"] = len(clean(r["narrative"]))
-    print(f"读取 {len(rows)} 条记录（runId={sorted({r['runId'] for r in rows})}）\n")
 
     by_arm_type = defaultdict(list)
     for r in rows:

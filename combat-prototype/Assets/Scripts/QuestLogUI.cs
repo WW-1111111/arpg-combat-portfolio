@@ -25,6 +25,10 @@ public class QuestLogUI : MonoBehaviour
 
     static Font uiFont;
     Text titleText, descText, objText, progressText, badgeText, statusText;
+    RectTransform progFill;            // 进度条：机制层的 currentCount/requiredCount
+    CanvasGroup bannerGroup;           // 完成横幅（居中，播完自动淡出）
+    Text bannerTitle, bannerBody;
+    Coroutine bannerRoutine;
     Quest current;
 
     static Font GetFont()
@@ -79,6 +83,9 @@ public class QuestLogUI : MonoBehaviour
         objText.text      = q.objectiveText;
         progressText.text = $"{q.currentCount} / {q.requiredCount}";
         progressText.color = bodyColor;
+
+        float t = q.requiredCount <= 0 ? 0f : (float)q.currentCount / q.requiredCount;
+        SetProgress(t, q.IsComplete ? doneColor : accentColor);
     }
 
     void OnCompleted(Quest q)
@@ -89,6 +96,11 @@ public class QuestLogUI : MonoBehaviour
         objText.text       = "任务完成";
         objText.color      = doneColor;
         progressText.color = doneColor;
+        SetProgress(1f, doneColor);
+
+        // 居中横幅：标题固定（机制层判定），正文用叙事层的完成语
+        if (bannerRoutine != null) StopCoroutine(bannerRoutine);
+        bannerRoutine = StartCoroutine(PlayBanner(q.completionText));
     }
 
     void SetStatus(string msg)
@@ -167,6 +179,85 @@ public class QuestLogUI : MonoBehaviour
         objText      = MakeText("Objective", objRow, "", 17, accentColor, TextAnchor.MiddleLeft);
         progressText = MakeText("Progress",  objRow, "", 18, bodyColor,  TextAnchor.MiddleRight, FontStyle.Bold);
         progressText.gameObject.AddComponent<LayoutElement>().preferredWidth = 80;
+
+        // --- 进度条（纯机制层：叙事怎么变都不影响这条）---
+        MakeProgressBar(panel);
+
+        // --- 完成横幅（默认隐藏）---
+        MakeBanner(canvasGO.transform);
+    }
+
+    // 进度条用锚点做填充，不需要精灵图
+    void MakeProgressBar(Transform parent)
+    {
+        var track = MakeRect("ProgressTrack", parent);
+        track.gameObject.AddComponent<LayoutElement>().minHeight = 6;
+        track.gameObject.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.45f);
+
+        progFill = MakeRect("ProgressFill", track);
+        progFill.anchorMin = Vector2.zero;
+        progFill.anchorMax = new Vector2(0f, 1f);
+        progFill.offsetMin = Vector2.zero;
+        progFill.offsetMax = Vector2.zero;
+        progFill.gameObject.AddComponent<Image>().color = accentColor;
+    }
+
+    void SetProgress(float t, Color color)
+    {
+        if (progFill == null) return;
+        progFill.anchorMax = new Vector2(Mathf.Clamp01(t), 1f);
+        progFill.GetComponent<Image>().color = color;
+    }
+
+    // 完成横幅：屏幕居中，淡入 → 停留 → 淡出
+    void MakeBanner(Transform canvasParent)
+    {
+        var root = MakeRect("CompleteBanner", canvasParent);
+        root.anchorMin = root.anchorMax = new Vector2(0.5f, 0.5f);
+        root.pivot = new Vector2(0.5f, 0.5f);
+        root.anchoredPosition = new Vector2(0f, 180f);
+        root.sizeDelta = new Vector2(900f, 160f);
+        bannerGroup = root.gameObject.AddComponent<CanvasGroup>();
+        bannerGroup.alpha = 0f;
+        bannerGroup.blocksRaycasts = false;
+
+        var col = root.gameObject.AddComponent<VerticalLayoutGroup>();
+        col.spacing = 12;
+        col.childAlignment = TextAnchor.MiddleCenter;
+        col.childControlWidth = true; col.childControlHeight = true;
+        col.childForceExpandWidth = true; col.childForceExpandHeight = false;
+
+        bannerTitle = MakeText("BannerTitle", root, "任 务 完 成", 46,
+                               titleColor, TextAnchor.MiddleCenter, FontStyle.Bold);
+        bannerBody  = MakeText("BannerBody", root, "", 20,
+                               doneColor, TextAnchor.MiddleCenter);
+    }
+
+    // 淡入 → 停留 → 淡出。用 unscaledDeltaTime，顿帧时也照常播。
+    System.Collections.IEnumerator PlayBanner(string body)
+    {
+        bannerBody.text = body;
+        var rt = bannerGroup.GetComponent<RectTransform>();
+
+        const float fadeIn = 0.35f, hold = 2.4f, fadeOut = 0.9f;
+        for (float t = 0f; t < fadeIn; t += Time.unscaledDeltaTime)
+        {
+            float k = t / fadeIn;
+            bannerGroup.alpha = k;
+            rt.localScale = Vector3.one * Mathf.Lerp(0.88f, 1f, k);   // 轻微放大，避免生硬弹出
+            yield return null;
+        }
+        bannerGroup.alpha = 1f;
+        rt.localScale = Vector3.one;
+
+        yield return new WaitForSecondsRealtime(hold);
+
+        for (float t = 0f; t < fadeOut; t += Time.unscaledDeltaTime)
+        {
+            bannerGroup.alpha = 1f - t / fadeOut;
+            yield return null;
+        }
+        bannerGroup.alpha = 0f;
     }
 
     RectTransform MakeRect(string name, Transform parent)

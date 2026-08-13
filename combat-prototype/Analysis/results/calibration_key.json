@@ -1,0 +1,102 @@
+[
+ {
+  "no": 1,
+  "rid": "Template|Boss|76"
+ },
+ {
+  "no": 2,
+  "rid": "TemplateRandom|Fetch|41"
+ },
+ {
+  "no": 3,
+  "rid": "LLM|DefeatCount|17"
+ },
+ {
+  "no": 4,
+  "rid": "Template|Fetch|44"
+ },
+ {
+  "no": 5,
+  "rid": "Template|DefeatCount|7"
+ },
+ {
+  "no": 6,
+  "rid": "LLM|Fetch|41"
+ },
+ {
+  "no": 7,
+  "rid": "LLM|Boss|77"
+ },
+ {
+  "no": 8,
+  "rid": "TemplateRandom|DefeatCount|10"
+ },
+ {
+  "no": 9,
+  "rid": "TemplateRandom|Fetch|36"
+ },
+ {
+  "no": 10,
+  "rid": "TemplateRandom|Boss|88"
+ },
+ {
+  "no": 11,
+  "rid": "LLM|Boss|72"
+ },
+ {
+  "no": 12,
+  "rid": "Template|Fetch|40"
+ },
+ {
+  "no": 13,
+  "rid": "TemplateRandom|Boss|60"
+ },
+ {
+  "no": 14,
+  "rid": "Template|DefeatCount|14"
+ },
+ {
+  "no": 15,
+  "rid": "TemplateRandom|Boss|64"
+ },
+ {
+  "no": 16,
+  "rid": "Template|Fetch|52"
+ },
+ {
+  "no": 17,
+  "rid": "LLM|Boss|83"
+ },
+ {
+  "no": 18,
+  "rid": "LLM|Fetch|42"
+ },
+ {
+  "no": 19,
+  "rid": "TemplateRandom|Boss|66"
+ },
+ {
+  "no": 20,
+  "rid": "LLM|DefeatCount|18"
+ },
+ {
+  "no": 21,
+  "rid": "TemplateRandom|DefeatCount|1"
+ },
+ {
+  "no": 22,
+  "rid": "Template|Boss|68"
+ },
+ {
+  "no": 23,
+  "rid": "Template|DefeatCount|16"
+ },
+ {
+  "no": 24,
+  "rid": "LLM|DefeatCount|22"
+ },
+ {
+  "no": 25,
+  "rid": "TemplateRandom|Fetch|57"
+ }
+]

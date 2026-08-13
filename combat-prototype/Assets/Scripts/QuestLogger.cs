@@ -60,6 +60,18 @@ public static class QuestLogger
     public static string RunId { get { EnsureInit(); return runId; } }
     public static string FilePath { get { EnsureInit(); return filePath; } }
 
+    // 关闭 Enter Play Mode 的 Reload Domain 后，static 不再在两次 Play 之间自动重置。
+    // 若不手动清，BatchRunner 设过的 fileName 会泄漏到下一次普通游玩，
+    // 把交互记录静默追加进 batch_generations.jsonl，污染评估语料；runId 也会跨会话不变（违反 NFR5）。
+    // SubsystemRegistration 在每次进入 Play 前都会执行，即使 Domain Reload 已关闭。
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetStatics()
+    {
+        runId    = null;
+        filePath = null;
+        fileName = "generations.jsonl";
+    }
+
     // 批量评估时切到独立文件，避免和交互游玩的记录混在一起
     public static void SetFileName(string name)
     {

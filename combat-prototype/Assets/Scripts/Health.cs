@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,7 +16,17 @@ public class Health : MonoBehaviour
     private Vector3 originalScale;
     private Coroutine squashRoutine;
 
-    void Start()
+    // --- 对外只读接口：血条 UI 用这些读数据，不直接碰内部字段 ---
+    public float Max => maxHealth;
+    public float Current => currentHealth;
+    public float Normalized => maxHealth <= 0f ? 0f : Mathf.Clamp01(currentHealth / maxHealth);
+    public bool IsDead { get; private set; }
+
+    public event Action<Health> OnHealthChanged;   // 血量变化 → 血条刷新
+    public event Action<Health> OnDied;            // 死亡 → 血条移除
+
+    // 初始化放在 Awake：血条在 Start 里订阅时就能读到正确初值，不受执行顺序影响
+    void Awake()
     {
         currentHealth = maxHealth;
         originalScale = transform.localScale;
@@ -24,9 +35,11 @@ public class Health : MonoBehaviour
     // 被攻击时调用：扣血 + 缩一下 + 判定死亡
     public void TakeDamage(float amount)
     {
-        if (invulnerable) return;   // 无敌帧期间免疫伤害(闪避)
+        if (invulnerable || IsDead) return;   // 无敌帧期间免疫伤害(闪避)
         currentHealth -= amount;
         Debug.Log(gameObject.name + " 受到 " + amount + " 伤害，剩余 " + currentHealth);
+
+        OnHealthChanged?.Invoke(this);   // 先通知血条(含归零那一下)，再判死亡
 
         if (currentHealth <= 0f)
         {
@@ -56,7 +69,10 @@ public class Health : MonoBehaviour
 
     void Die()
     {
+        if (IsDead) return;
+        IsDead = true;
         Debug.Log(gameObject.name + " 死亡");
+        OnDied?.Invoke(this);
         if (destroyOnDeath)
         {
             QuestManager.Instance?.ReportKill(gameObject.tag);                // 通知任务系统：击杀+1
