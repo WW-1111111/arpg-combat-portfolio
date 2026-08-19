@@ -33,21 +33,21 @@ public class CombatHUD : MonoBehaviour
     readonly Dictionary<Health, Bar> enemyBars = new Dictionary<Health, Bar>();
     float nextScan;
 
-    // 进场景自动创建，无需任何编辑器操作
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    static void AutoCreate()
-    {
-        if (GameObject.FindGameObjectWithTag("Player") == null) return;   // 非战斗场景不创建
-        if (FindAnyObjectByType<CombatHUD>() != null) return;
-        new GameObject("CombatHUD", typeof(CombatHUD));
-    }
+    // 由 Bootstrap 负责创建（它还处理场景重载后的补建）
 
     // ===================== 生命周期 =====================
 
     void Awake()
     {
-        Instance = this;      // 每次进 Play 都重新赋值，不需要静态重置
+        Instance = this;
         Build();
+    }
+
+    // 必须清空：调用方用的是 CombatHUD.Instance?.HideBoss()，而 C# 的 ?. 走真实引用判空、
+    // 绕过 Unity 对 == 的 fake-null 重载 —— 悬空引用会抛 MissingReferenceException 而不是被跳过。
+    void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 
     void Start()
@@ -103,7 +103,7 @@ public class CombatHUD : MonoBehaviour
     // 按标签扫描场景里的敌人，自动增删血条 —— 敌人不需要挂任何脚本
     void ScanEnemies()
     {
-        foreach (var h in FindObjectsByType<Health>(FindObjectsSortMode.None))
+        foreach (var h in FindObjectsByType<Health>())
         {
             if (h == null || h.IsDead) continue;
             if (!h.CompareTag("Enemy")) continue;          // 只给敌人加；玩家/Boss 有自己的条
@@ -159,10 +159,12 @@ public class CombatHUD : MonoBehaviour
             bar.Root.anchoredPosition = local;
         }
 
+        // 注意：进入 gone 的条目里 h 可能已经是 null（敌人被销毁），
+        // 所以先取血条再判 h —— 反过来写会漏掉这些条的 GameObject，血条留在屏幕上不消失。
         if (gone != null)
             foreach (var h in gone)
             {
-                if (h != null && enemyBars.TryGetValue(h, out var b) && b.Root != null)
+                if (enemyBars.TryGetValue(h, out var b) && b.Root != null)
                     Destroy(b.Root.gameObject);
                 enemyBars.Remove(h);
             }
@@ -197,7 +199,7 @@ public class CombatHUD : MonoBehaviour
         playerBar.Root.anchorMin = playerBar.Root.anchorMax = new Vector2(0f, 0f);
         playerBar.Root.pivot = new Vector2(0f, 0f);
         playerBar.Root.anchoredPosition = new Vector2(48f, 48f);
-        MakeText("PlayerLabel", playerBar.Root, "影 子", 17,
+        MakeText("PlayerLabel", playerBar.Root, "S H A D E", 17,
                  new Color(0.9f, 0.9f, 0.9f), TextAnchor.LowerLeft)
             .rectTransform.anchoredPosition = new Vector2(2f, 30f);
         playerNum = MakeText("PlayerNum", playerBar.Root, "", 16,

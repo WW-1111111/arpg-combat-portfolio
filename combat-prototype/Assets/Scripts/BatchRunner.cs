@@ -1,4 +1,5 @@
 using System.Collections;
+using System.IO;
 using UnityEngine;
 
 // O5 评估的数据生成器：一次跑完整个配对语料。
@@ -36,13 +37,21 @@ public class BatchRunner : MonoBehaviour
     [Header("世界背景（必须与 QuestManager 里的一致）")]
     [TextArea]
     public string worldContext =
-        "芦苇之国——战国乱世中最弱小的国家。国人迷恋瀑布之水，只因那水代表“不死”的力量；" +
-        "纵然饮下它会使人失去理智、化为怪物，人们为求永生仍甘愿如此。国力因而凋敝，" +
-        "芦苇之国屡遭强邻侵略，内忧外患。主角是一名忍者，名为“影子”，侍奉其主“神子”。" +
-        "影子的目标是救出主人，神子的目标是斩断“不死”，影子亦愿助其达成。";
+        "The Reedlands - the weakest nation in an age of warring states. Its people are obsessed " +
+        "with the Fallswater, for that water carries the power of undeath; though drinking it " +
+        "strips away reason and turns a person into a monster, they take it gladly in exchange " +
+        "for eternal life. The nation has withered as a result, and the Reedlands are invaded " +
+        "again and again by stronger neighbours, beset from within and without. You are a shinobi " +
+        "called Shade, sworn to your master, the Divine Heir. Shade's goal is to rescue the Divine " +
+        "Heir; the Divine Heir's goal is to sever undeath itself, and Shade means to help.";
 
     void Awake()
     {
+        // 必须先判 runOnStart：这两件事都只在"本次 Play 确实要跑批量"时才该做。
+        // 否则本物体留在场景里就会持续生效 —— 关掉 QuestManager（任务栏出现但永远是空的）、
+        // 关掉所有敌人AI并让玩家无敌（战斗完全失效），而且全程不报任何错，极难排查。
+        if (!runOnStart) return;
+
         if (disableQuestManager)
         {
             var qm = FindAnyObjectByType<QuestManager>();   // 只需任意一个，不依赖实例ID排序
@@ -57,7 +66,7 @@ public class BatchRunner : MonoBehaviour
     void FreezeCombat()
     {
         int n = 0;
-        foreach (var ai in FindObjectsByType<EnemyAI>(FindObjectsSortMode.None))
+        foreach (var ai in FindObjectsByType<EnemyAI>())
         {
             ai.enabled = false;   // 敌人不再追击/攻击
             n++;
@@ -78,6 +87,21 @@ public class BatchRunner : MonoBehaviour
     public IEnumerator RunBatch()
     {
         QuestLogger.SetFileName(outputFileName);
+
+        // 目标文件非空就拒绝开跑。
+        // 真实事故（2026-08-13）：场景里 runOnStart 是勾着的，每按一次 Play 都会自动开跑并**追加**，
+        // 两次中途中断的运行把语料从 270 条撑到 311 条；而分析脚本整份读取、不按 runId 过滤，
+        // 重跑出来的数字与已发表的 results.md 对不上，却不报任何错。
+        // 一份语料必须来自一次完整运行（NFR5），所以宁可不跑也不追加。
+        string path = QuestLogger.FilePath;
+        if (File.Exists(path) && new FileInfo(path).Length > 0)
+        {
+            Debug.LogError(
+                $"[批量] 已存在语料文件，拒绝追加：\n  {path}\n" +
+                "  追加会让新旧两次运行混在一起，导致分析结果不可复现。\n" +
+                "  请先把它改名归档（或改 outputFileName），再重新运行。");
+            yield break;
+        }
 
         var scenario = GetComponent<ScenarioGenerator>();
         if (scenario == null) scenario = gameObject.AddComponent<ScenarioGenerator>();

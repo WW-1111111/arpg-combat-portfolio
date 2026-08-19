@@ -50,16 +50,18 @@ public class QuestGenerator : MonoBehaviour, IQuestNarrator
         // ---- 1) 构造提示词 ----
         string mechanicDesc = DescribeMechanic(quest);
         string systemPrompt =
-            "你是一个动作RPG的任务叙事设计师。根据给定的【任务机制】和【世界背景】，" +
-            "为任务写一段贴合情境的叙事包装。严格要求：不要改动任何机制数值或目标，" +
-            "只输出叙事文本。必须只输出一个 JSON 对象，字段为：" +
-            "title(标题)、description(背景描述)、objectiveText(目标提示)、completionText(完成语)。";
+            "You are a quest narrative designer for an action RPG. Given the QUEST MECHANICS and " +
+            "the WORLD SETTING below, write a narrative wrapper that fits the situation. Strict " +
+            "requirement: do not alter any mechanical value or objective; output narrative text " +
+            "only. You must output exactly one JSON object with the fields: " +
+            "title, description, objectiveText, completionText.";
         string situationDesc =
-            $"地点：{quest.location}；对象：{quest.targetFlavour}；时机：{quest.timeOfDay}";
+            $"place: {quest.location}; subject: {quest.targetFlavour}; time: {quest.timeOfDay}";
         string userPrompt =
-            $"【世界背景】{worldContext}\n【任务机制】{mechanicDesc}\n【当前情境】{situationDesc}\n" +
-            "请用中文生成上述四个字段的 JSON。要求把情境要素（地点、对象、时机）自然地融入叙事，" +
-            "而不是简单罗列。objectiveText 里可以体现进度语气，但不要写死具体数字。";
+            $"[WORLD SETTING] {worldContext}\n[QUEST MECHANICS] {mechanicDesc}\n[SITUATION] {situationDesc}\n" +
+            "Write the four fields as JSON, in English. Weave the situational elements (place, " +
+            "subject, time) naturally into the narrative rather than simply listing them. " +
+            "objectiveText may convey a sense of progress, but must not hard-code a specific number.";
 
         // 准备日志记录 + 开始计时（FR7）
         var rec = NewRecord(quest, worldContext, systemPrompt, userPrompt);
@@ -150,7 +152,7 @@ public class QuestGenerator : MonoBehaviour, IQuestNarrator
             rec.completionText = quest.completionText;
             QuestLogger.Log(rec);
 
-            Debug.Log("[LLM生成] " + quest.title + " | " + quest.description);
+            Debug.Log("[LLM] " + quest.title + " | " + quest.description);
             onDone?.Invoke(quest);
         }
     }
@@ -183,20 +185,20 @@ public class QuestGenerator : MonoBehaviour, IQuestNarrator
         switch (q.type)
         {
             // 只描述"数量与类型"这类机制事实；具体样貌由【当前情境】提供，保持机制/表现分离
-            case QuestType.DefeatCount: return $"击败 {q.requiredCount} 名敌人。";
-            case QuestType.Fetch:       return $"收集 {q.requiredCount} 件物品。";
-            case QuestType.Boss:        return "击败一名头目。";
-            default: return "未知任务。";
+            case QuestType.DefeatCount: return $"Defeat {q.requiredCount} enemies.";
+            case QuestType.Fetch:       return $"Collect {q.requiredCount} items.";
+            case QuestType.Boss:        return "Defeat one champion.";
+            default: return "Unknown quest.";
         }
     }
 
     // 生成失败时的兜底，保证游戏不崩
     Quest Fallback(Quest q)
     {
-        q.title = "[占位] 清剿威胁";
-        q.description = "[占位] 敌人出现在附近。";
-        q.objectiveText = "击败敌人";
-        q.completionText = "[占位] 威胁已解除。";
+        q.title = "[fallback] Clear the Threat";
+        q.description = "[fallback] Enemies have appeared nearby.";
+        q.objectiveText = "Defeat the enemies";
+        q.completionText = "[fallback] The threat has been removed.";
         return q;
     }
 

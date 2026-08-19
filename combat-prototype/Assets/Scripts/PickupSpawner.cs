@@ -7,20 +7,14 @@ using UnityEngine;
 // 多撒两个：玩家不必把地图上每一个都捡完，找起来不至于烦躁。
 public class PickupSpawner : MonoBehaviour
 {
-    public float minRadius = 8f;
-    public float maxRadius = 22f;
+    public float minRadius = 6f;
+    public float maxRadius = 16f;   // 太远会让玩家在空地上乱找，录像很无聊
     public int extraItems = 2;
     public Color itemColor = new Color(1f, 0.82f, 0.35f);
 
     bool spawned;
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    static void AutoCreate()
-    {
-        if (GameObject.FindGameObjectWithTag("Player") == null) return;
-        if (FindAnyObjectByType<PickupSpawner>() != null) return;
-        new GameObject("PickupSpawner", typeof(PickupSpawner));
-    }
+    // 由 Bootstrap 负责创建
 
     void Start()
     {
@@ -37,7 +31,7 @@ public class PickupSpawner : MonoBehaviour
 
     void OnQuest(Quest q)
     {
-        if (spawned || q == null || q.type != QuestType.Fetch) return;
+        if (spawned || !IsRealQuest(q) || q.type != QuestType.Fetch) return;
         spawned = true;
 
         var player = GameObject.FindGameObjectWithTag("Player");
@@ -54,8 +48,14 @@ public class PickupSpawner : MonoBehaviour
             pos.y = GroundY(pos) + 1.1f;
             PickupItem.Create(pos, q.targetId, itemColor);
         }
-        Debug.Log($"[拾取] 已生成 {n} 个「{q.targetFlavour}」（需要 {q.requiredCount} 个）");
+        Debug.Log($"[Pickup] Spawned {n} x \"{q.targetFlavour}\" (need {q.requiredCount})");
     }
+
+    // Unity 对 [Serializable] 类字段永远不会反序列化成 null —— QuestManager.currentQuest
+    // 开场就是一个各字段为默认值的空 Quest（type 默认 = Fetch、requiredCount = 0）。
+    // 只判 != null 会让生成器在真任务到来前就空转一次并把 spawned 锁死。
+    public static bool IsRealQuest(Quest q)
+        => q != null && q.requiredCount > 0 && !string.IsNullOrEmpty(q.targetId);
 
     // 从高处往下打一条射线找地面；打不到就退回原高度
     static float GroundY(Vector3 pos)

@@ -29,62 +29,84 @@ public class RandomTemplateNarrator : MonoBehaviour, IQuestNarrator
 
     // ===== 击杀类词池 =====
     static readonly string[] KillTitles = {
-        "讨伐委托", "清剿之令", "境内除患", "肃清来犯", "剿敌任务", "边境警讯", "除贼", "平乱"
+        "Subjugation Order", "Order to Purge", "Trouble in the Province", "Repel the Incursion",
+        "Enemy Cull", "Border Alarm", "Bandit Clearance", "Quell the Unrest"
     };
     static readonly string[] KillOpenings = {
-        "{time}，芦苇之国边境传来急报，", "{time}，探子自前线归来，", "{time}，村中长老递来口信，",
-        "{time}，哨所燃起狼烟，", "{time}，神子身边的侍从传令，", "{time}，芦苇城下传来骚动，"
+        "Word reached the border of the Reedlands {time}, ", "A scout returned from the front {time}, ",
+        "The village elder sent a message {time}, ", "Signal fires rose from the outpost {time}, ",
+        "An attendant of the Divine Heir passed on an order {time}, ",
+        "There was a commotion below the walls of Reedhold {time}, "
     };
     static readonly string[] KillBodies = {
-        "{loc}一带有 {n} 名{tf}盘踞不去。", "{n} 名{tf}正在{loc}威胁着村民。",
-        "{loc}附近聚集了 {n} 名{tf}。", "已有 {n} 名{tf}潜入{loc}。",
-        "{n} 名{tf}正在{loc}为祸乡里。", "探得 {n} 名{tf}埋伏于{loc}。"
+        "and {n} {tf} have dug in around {loc}.", "and {n} {tf} are threatening the villagers at {loc}.",
+        "and {n} {tf} have gathered near {loc}.", "and {n} {tf} have slipped into {loc}.",
+        "and {n} {tf} are preying on the countryside at {loc}.",
+        "and {n} {tf} were found lying in ambush at {loc}."
     };
     static readonly string[] KillObjectives = {
-        "消灭{tf}", "清剿{loc}的{tf}", "肃清{loc}一带的敌人", "讨伐来犯的{tf}", "除去{loc}的威胁"
+        "Destroy the {tf}", "Clear the {tf} from {loc}", "Sweep the enemies from {loc}",
+        "Repel the {tf}", "Remove the threat at {loc}"
     };
     static readonly string[] KillCompletions = {
-        "{tf}已被肃清，{loc}恢复了安宁。", "威胁已除，村民得以安眠。", "来犯的{tf}尽数伏诛。",
-        "{loc}暂时太平了。", "敌患已平，长老托人道谢。", "{loc}重归寂静。"
+        "The {tf} have been cleared, and peace returns to {loc}.",
+        "The threat is gone. The villagers may sleep.", "The {tf} who came have all been put down.",
+        "There is quiet at {loc}, for now.", "The trouble is settled. The elder sends word of thanks.",
+        "Silence has returned to {loc}."
     };
 
     // ===== 取物类词池 =====
     static readonly string[] FetchTitles = {
-        "采买委托", "寻物之托", "芦苇之国所需", "取物任务", "补给征集", "急需之物"
+        "Gathering Errand", "A Request for Goods", "Needed in the Reedlands",
+        "Retrieval Task", "Supply Levy", "Urgently Required"
     };
     static readonly string[] FetchOpenings = {
-        "{time}，村中医者托人带话，", "{time}，长老差人前来，", "{time}，寺中僧人捎来口信，",
-        "{time}，神子身边的侍从传令，", "{time}，村口的老妪拦住了你，", "{time}，药铺的伙计面露难色，"
+        "The village healer sent word {time}, ", "The elder dispatched a messenger {time}, ",
+        "A monk from the temple passed on a message {time}, ",
+        "An attendant of the Divine Heir gave an order {time}, ",
+        "An old woman stopped you at the village gate {time}, ",
+        "The apothecary's assistant looked troubled {time}, "
     };
     static readonly string[] FetchBodies = {
-        "需要 {n} 份{tf}，{loc}或许还能寻到。", "眼下急缺 {n} 个{tf}，听说{loc}一带有。",
-        "望你前往{loc}，寻回 {n} 件{tf}。", "请设法在{loc}取得 {n} 份{tf}。",
-        "若能从{loc}凑齐 {n} 个{tf}便好。"
+        "saying that {n} {tf} are needed, and that some may still be found at {loc}.",
+        "saying that {n} {tf} are urgently short, and that {loc} is said to have them.",
+        "asking that you go to {loc} and bring back {n} {tf}.",
+        "asking that you obtain {n} {tf} at {loc}.",
+        "saying it would be well if {n} {tf} could be gathered from {loc}."
     };
     static readonly string[] FetchObjectives = {
-        "寻回{tf}", "在{loc}收集{tf}", "取得{tf}", "搜寻{loc}的{tf}"
+        "Bring back the {tf}", "Collect the {tf} at {loc}", "Obtain the {tf}", "Search {loc} for the {tf}"
     };
     static readonly string[] FetchCompletions = {
-        "{tf}已备齐。", "东西送到了，对方连声道谢。", "委托已了，来日方长。", "{tf}交割完毕，村中之急得解。"
+        "The {tf} have been gathered.", "The goods were delivered, with thanks.",
+        "The errand is done. There will be other days.",
+        "The {tf} changed hands, and the village's need is met."
     };
 
     // ===== Boss 类词池 =====
     static readonly string[] BossTitles = {
-        "讨伐令", "除魔", "强敌当前", "生死之约", "斩首任务", "宿敌"
+        "Writ of Subjugation", "Banish the Fiend", "A Powerful Foe",
+        "A Pact of Life and Death", "Decapitation Order", "Old Enemy"
     };
     static readonly string[] BossOpenings = {
-        "{time}，芦苇之国传来消息，", "{time}，探子拼死带回情报，", "{time}，神子神色凝重地告知，",
-        "{time}，山中猎户惊惶来报，", "{time}，寺中钟声骤响，"
+        "Word came from across the Reedlands {time}, ",
+        "A scout brought back intelligence at the cost of their life {time}, ",
+        "The Divine Heir told you gravely {time}, ",
+        "A hunter came down from the mountains in terror {time}, ",
+        "The temple bell rang out {time}, "
     };
     static readonly string[] BossBodies = {
-        "{tf}已现身于{loc}。", "名为{tf}的强敌正盘踞{loc}。", "{tf}的踪迹在{loc}被发现。",
-        "{tf}挡在了通往{loc}深处的路上。", "{tf}正在{loc}等待着挑战者。"
+        "that {tf} has appeared at {loc}.", "that a powerful foe called {tf} has taken {loc}.",
+        "that traces of {tf} were found at {loc}.",
+        "that {tf} now blocks the road deeper into {loc}.",
+        "that {tf} waits at {loc} for a challenger."
     };
     static readonly string[] BossObjectives = {
-        "击败{tf}", "讨伐{loc}的{tf}", "斩杀{tf}", "了结与{tf}的一战"
+        "Defeat {tf}", "Subjugate {tf} at {loc}", "Cut down {tf}", "Finish the fight with {tf}"
     };
     static readonly string[] BossCompletions = {
-        "{tf}已被击倒。", "强敌伏诛，此战不易。", "{tf}倒在了{loc}，四周重归寂静。", "一战既了，刀锋未卷。"
+        "You have struck down {tf}.", "The foe is dead. It was no easy fight.",
+        "At {loc}, {tf} fell, and silence returned.", "The fight is over, and the blade is unbent."
     };
 
     public void GenerateNarrative(Quest quest, string worldContext, Action<Quest> onDone)

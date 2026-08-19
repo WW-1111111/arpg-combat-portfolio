@@ -43,7 +43,7 @@ public class QuestLogUI : MonoBehaviour
     {
         Build();
         var qm = QuestManager.Instance;
-        if (qm == null) { SetStatus("未找到 QuestManager"); return; }
+        if (qm == null) { SetStatus("QuestManager not found"); return; }
 
         qm.OnQuestUpdated   += Refresh;
         qm.OnQuestCompleted += OnCompleted;
@@ -51,14 +51,14 @@ public class QuestLogUI : MonoBehaviour
         // 徽标：显示当前用的是哪个叙事器（演示时一眼看出三档差异）
         badgeText.text = qm.narratorMode switch
         {
-            QuestManager.NarratorMode.LLM            => "LLM 生成",
-            QuestManager.NarratorMode.TemplateRandom => "随机模板",
-            _                                        => "固定模板"
+            QuestManager.NarratorMode.LLM            => "LLM",
+            QuestManager.NarratorMode.TemplateRandom => "Randomised template",
+            _                                        => "Fixed template"
         };
 
         // 若任务已经生成好了(模板是同步的,可能早于本Start)，补显示一次
         if (qm.currentQuest != null) Refresh(qm.currentQuest);
-        else SetStatus("正在生成任务…");   // LLM异步约2-3秒，此时游戏仍可操作(NFR2)
+        else SetStatus("Generating quest...");   // LLM异步约2-3秒，此时游戏仍可操作(NFR2)
     }
 
     void OnDestroy()
@@ -93,7 +93,7 @@ public class QuestLogUI : MonoBehaviour
         // 完成时把描述换成【叙事层】的完成语
         descText.text      = q.completionText;
         descText.color     = doneColor;
-        objText.text       = "任务完成";
+        objText.text       = "Quest complete";
         objText.color      = doneColor;
         progressText.color = doneColor;
         SetProgress(1f, doneColor);
@@ -156,7 +156,7 @@ public class QuestLogUI : MonoBehaviour
         hLayout.childForceExpandWidth = true;
         header.gameObject.AddComponent<LayoutElement>().minHeight = 26;
 
-        MakeText("Label", header, "任 务", 20, accentColor, TextAnchor.MiddleLeft, FontStyle.Bold);
+        MakeText("Label", header, "Q U E S T", 20, accentColor, TextAnchor.MiddleLeft, FontStyle.Bold);
         badgeText = MakeText("Badge", header, "", 16, new Color(0.75f, 0.75f, 0.75f), TextAnchor.MiddleRight);
 
         // --- 标题（叙事层）---
@@ -227,7 +227,7 @@ public class QuestLogUI : MonoBehaviour
         col.childControlWidth = true; col.childControlHeight = true;
         col.childForceExpandWidth = true; col.childForceExpandHeight = false;
 
-        bannerTitle = MakeText("BannerTitle", root, "任 务 完 成", 46,
+        bannerTitle = MakeText("BannerTitle", root, "QUEST  COMPLETE", 46,
                                titleColor, TextAnchor.MiddleCenter, FontStyle.Bold);
         bannerBody  = MakeText("BannerBody", root, "", 20,
                                doneColor, TextAnchor.MiddleCenter);

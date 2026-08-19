@@ -158,7 +158,11 @@ public class PlayerMove : MonoBehaviour
         foreach (Collider hit in hits)
         {
             Health h = hit.GetComponent<Health>();
-            if (h != null) { h.TakeDamage(attackDamage); hitSomething = true; }
+            // 必须跳过自己：判定球心在身前 1.5、半径 1.2，近端只到身前 0.3，
+            // 正好罩住角色自身的胶囊体 —— 不排除的话每挥一刀就自伤 attackDamage 点。
+            if (h == null || h.gameObject == gameObject) continue;
+            h.TakeDamage(attackDamage);
+            hitSomething = true;
         }
 
         if (hitSomething)

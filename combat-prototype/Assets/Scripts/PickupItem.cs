@@ -54,7 +54,7 @@ public class PickupItem : MonoBehaviour
         // 触发器 + 运动学刚体：无论玩家用 CharacterController 还是 Rigidbody 都能触发
         var col = go.GetComponent<SphereCollider>();
         col.isTrigger = true;
-        col.radius = 1.6f;                       // 判定比外观大，捡起来手感宽松
+        col.radius = 3.5f;   // 局部空间值！物体已缩到 0.45，世界半径 = 3.5×0.45 ≈ 1.58，判定比外观大一圈
         var rb = go.AddComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.useGravity = false;

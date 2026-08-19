@@ -20,10 +20,13 @@ public class QuestManager : MonoBehaviour
     [Header("是否显示任务栏 UI（FR6）")]
     public bool showQuestUI = true;
     [TextArea] public string worldContext =
-        "芦苇之国——战国乱世中最弱小的国家。国人迷恋瀑布之水，只因那水代表“不死”的力量；" +
-        "纵然饮下它会使人失去理智、化为怪物，人们为求永生仍甘愿如此。国力因而凋敝，" +
-        "芦苇之国屡遭强邻侵略，内忧外患。主角是一名忍者，名为“影子”，侍奉其主“神子”。" +
-        "影子的目标是救出主人，神子的目标是斩断“不死”，影子亦愿助其达成。";
+        "The Reedlands — the weakest nation in an age of warring states. Its people are obsessed " +
+        "with the Fallswater, for that water carries the power of undeath; though drinking it " +
+        "strips away reason and turns a person into a monster, they take it gladly in exchange " +
+        "for eternal life. The nation has withered as a result, and the Reedlands are invaded " +
+        "again and again by stronger neighbours, beset from within and without. You are a shinobi " +
+        "called Shade, sworn to your master, the Divine Heir. Shade's goal is to rescue the Divine " +
+        "Heir; the Divine Heir's goal is to sever undeath itself, and Shade means to help.";
 
     public event Action<Quest> OnQuestUpdated;    // 进度变化 → 通知UI
     public event Action<Quest> OnQuestCompleted;  // 完成 → 通知UI
@@ -75,7 +78,7 @@ public class QuestManager : MonoBehaviour
     {
         currentQuest = quest;
         OnQuestUpdated?.Invoke(currentQuest);
-        Debug.Log($"接到任务：{quest.title}");
+        Debug.Log($"Quest accepted: {quest.title}");
     }
 
     // 敌人死亡时调用（击杀/Boss类）
@@ -101,10 +104,10 @@ public class QuestManager : MonoBehaviour
     void AfterProgress()
     {
         OnQuestUpdated?.Invoke(currentQuest);
-        Debug.Log($"进度：{currentQuest.currentCount}/{currentQuest.requiredCount}");
+        Debug.Log($"Progress: {currentQuest.currentCount}/{currentQuest.requiredCount}");
         if (currentQuest.IsComplete)
         {
-            Debug.Log($"任务完成：{currentQuest.completionText}");
+            Debug.Log($"Quest complete: {currentQuest.completionText}");
             OnQuestCompleted?.Invoke(currentQuest);
         }
     }

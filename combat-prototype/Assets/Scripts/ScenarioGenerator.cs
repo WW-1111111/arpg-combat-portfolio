@@ -13,22 +13,25 @@ public class ScenarioGenerator : MonoBehaviour
 
     // ===== 情境词表（系统控制，非 LLM 产出）=====
     static readonly string[] Locations = {
-        "瀑布下的水潭", "芦苇城下", "荒废的寺庙", "竹林小径",
-        "断崖边的栈道", "被焚毁的村落", "结冰的池畔", "敌军的哨所"
+        "the pool beneath the falls", "the walls of Reedhold", "a derelict temple", "a bamboo path",
+        "the cliffside walkway", "a burnt-out village", "the frozen pond", "an enemy outpost"
     };
     static readonly string[] Times = {
-        "拂晓时分", "正午", "黄昏", "深夜", "雨夜", "大雪初霁"
+        "at first light", "at high noon", "at dusk", "deep in the night",
+        "on a rainy night", "after the snowfall"
     };
     static readonly string[] EnemyFlavours = {
-        "侵略军的足轻", "饮过瀑布之水的怪物", "失去理智的武士",
-        "敌国的斥候", "手持火铳的雇佣兵", "芦苇之国的叛兵"
+        "invader footsoldiers", "creatures that drank the Fallswater", "maddened swordsmen",
+        "enemy scouts", "matchlock mercenaries", "Reedland deserters"
     };
     static readonly string[] ItemFlavours = {
-        "止血草", "火药壶", "供奉用的香油", "封印用的符纸", "干粮袋", "药引"
+        "bloodstaunch herb", "powder flasks", "votive oil", "sealing talismans",
+        "ration pouches", "medicinal catalyst"
     };
     // 原创头目名（呼应"饮泉化怪"的设定，不使用任何商业游戏的专名）
     static readonly string[] BossNames = {
-        "沉泉将军", "无首骑将", "白骨僧", "枯苇之主", "溺影"
+        "General Drownspring", "the Headless Rider", "the Bone Monk",
+        "the Withered Reed Lord", "Undertow"
     };
 
     // 生成第 index 个某类型的实例。种子由 baseSeed 与 index 决定 → 单个实例也可独立复现。

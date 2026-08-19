@@ -78,11 +78,13 @@ public class CameraFollow : MonoBehaviour
     // 找"角色面前 ±lockAngle 锥形内、且 lockRange 距离内"最近的敌人
     Transform FindLockableEnemy()
     {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         Vector3 fwd = target.forward; fwd.y = 0; fwd.Normalize();   // 角色当前面朝(水平)
         Transform best = null;
         float minDist = lockRange;
-        foreach (GameObject e in enemies)
+        // Boss 用的是独立的 "Boss" 标签（Health.Die 要靠它上报任务系统），
+        // 只搜 "Enemy" 会导致整场 Boss 战锁不上 —— 两个标签都要搜。
+        foreach (string tag in new[] { "Enemy", "Boss" })
+        foreach (GameObject e in GameObject.FindGameObjectsWithTag(tag))
         {
             Vector3 to = e.transform.position - target.position;
             to.y = 0;

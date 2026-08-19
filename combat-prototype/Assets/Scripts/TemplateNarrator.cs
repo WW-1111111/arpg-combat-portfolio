@@ -16,22 +16,22 @@ public class TemplateNarrator : MonoBehaviour, IQuestNarrator
             // 文案有世界味（真实游戏的写死文案也是如此），但【完全静态】：
             // 同一类型永远同一段文字，且一律不使用情境三要素 → 这是"地板"的真正含义。
             case QuestType.DefeatCount:
-                quest.title          = "讨伐任务";
-                quest.description    = $"芦苇之国内忧外患，境内又现敌踪。共 {quest.requiredCount} 名，将其全部消灭，以免祸及村民。";
-                quest.objectiveText  = $"消灭敌人 0/{quest.requiredCount}";
-                quest.completionText = "敌人已被清除，任务完成。";
+                quest.title          = "Subjugation";
+                quest.description    = $"The Reedlands are beset from within and without, and enemies have been sighted again. There are {quest.requiredCount} of them. Cut them all down before they reach the villagers.";
+                quest.objectiveText  = $"Defeat enemies 0/{quest.requiredCount}";
+                quest.completionText = "The enemies have been cleared. Quest complete.";
                 break;
             case QuestType.Fetch:
-                quest.title          = "取物任务";
-                quest.description    = $"芦苇之国物资匮乏，眼下需要 {quest.requiredCount} 件补给，请设法取得。";
-                quest.objectiveText  = $"收集物品 0/{quest.requiredCount}";
-                quest.completionText = "物资已备齐，任务完成。";
+                quest.title          = "Retrieval";
+                quest.description    = $"The Reedlands are short of supplies. {quest.requiredCount} items are needed. See that they are obtained.";
+                quest.objectiveText  = $"Collect items 0/{quest.requiredCount}";
+                quest.completionText = "The supplies are gathered. Quest complete.";
                 break;
             case QuestType.Boss:
-                quest.title          = "头目讨伐";
-                quest.description    = "一名强敌出现在芦苇之国境内，将其击败。";
-                quest.objectiveText  = "击败头目";
-                quest.completionText = "头目已被击败，任务完成。";
+                quest.title          = "Slay the Champion";
+                quest.description    = "A powerful foe has appeared within the Reedlands. Strike it down.";
+                quest.objectiveText  = "Defeat the champion";
+                quest.completionText = "The champion has fallen. Quest complete.";
                 break;
         }
         // FR7：基线也要记日志，才能和 LLM 做同口径对比

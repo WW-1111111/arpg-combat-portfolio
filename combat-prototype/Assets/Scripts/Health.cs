@@ -37,7 +37,7 @@ public class Health : MonoBehaviour
     {
         if (invulnerable || IsDead) return;   // 无敌帧期间免疫伤害(闪避)
         currentHealth -= amount;
-        Debug.Log(gameObject.name + " 受到 " + amount + " 伤害，剩余 " + currentHealth);
+        Debug.Log(gameObject.name + " took " + amount + " damage, " + currentHealth + " remaining");
 
         OnHealthChanged?.Invoke(this);   // 先通知血条(含归零那一下)，再判死亡
 
@@ -48,6 +48,9 @@ public class Health : MonoBehaviour
         }
 
         // 受击反馈：缩一下再弹回(没死才做)
+        // squashScale >= 1 表示"不要缩" —— Boss 由 BossController 独占体型控制，
+        // 若这里仍每帧写 localScale，两者会互相覆盖造成闪烁。
+        if (squashScale >= 1f) return;
         if (squashRoutine != null) StopCoroutine(squashRoutine);
         squashRoutine = StartCoroutine(Squash());
     }
@@ -71,7 +74,7 @@ public class Health : MonoBehaviour
     {
         if (IsDead) return;
         IsDead = true;
-        Debug.Log(gameObject.name + " 死亡");
+        Debug.Log(gameObject.name + " died");
         OnDied?.Invoke(this);
         if (destroyOnDeath)
         {
@@ -79,6 +82,11 @@ public class Health : MonoBehaviour
             Destroy(gameObject);                                              // 敌人：直接销毁
         }
         else
+        {
+            // 重载会杀掉 PlayerMove 里还没跑完的 HitStop 协程。若恰好死在顿帧窗口内，
+            // timeScale 会永久卡在 0.05，整个游戏变成慢动作 —— 必须在重载前手动复位。
+            Time.timeScale = 1f;
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);  // 玩家：重载当前场景=重来
+        }
     }
 }
